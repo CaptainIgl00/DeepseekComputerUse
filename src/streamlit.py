@@ -2,11 +2,10 @@
 Streamlit chat interface with LangChain agent using DeepSeek LLM.
 """
 import streamlit as st
-from typing import List
 from langchain_core.messages import AIMessage, HumanMessage
 from dotenv import load_dotenv
 import os
-from agent import TerminalAgent
+from agent import TerminalAgent, StreamHandler
 
 def init_chat() -> None:
     """Initialize chat session state if it doesn't exist."""
@@ -46,7 +45,9 @@ def main() -> None:
         
         # Get AI response
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                response = st.session_state.agent.execute(prompt, st.session_state.messages)
-                st.markdown(response["output"])
-                st.session_state.messages.append(AIMessage(content=response["output"]))
+            stream_handler = StreamHandler(st.empty())
+            st.session_state.agent.execute(prompt, st.session_state.messages, stream_handler)
+            st.session_state.messages.append(AIMessage(content=stream_handler.text))
+
+if __name__ == "__main__":
+    main()

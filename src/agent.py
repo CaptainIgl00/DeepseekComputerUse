@@ -7,6 +7,16 @@ from langchain_core.messages import BaseMessage
 from langchain.agents import AgentExecutor, create_openai_tools_agent
 from langchain_community.tools import ShellTool
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.callbacks.base import BaseCallbackHandler
+
+class StreamHandler(BaseCallbackHandler):
+    def __init__(self, container, initial_text=""):
+        self.container = container
+        self.text = initial_text
+
+    def on_llm_new_token(self, token: str, **kwargs) -> None:
+        self.text += token
+        self.container.markdown(self.text)
 
 class TerminalAgent:
     """Agent class for executing bash commands using LangChain and DeepSeek."""
@@ -39,30 +49,32 @@ class TerminalAgent:
             ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ])
-        
-        # Create agent
-        agent = create_openai_tools_agent(self.llm, self.tools, self.prompt)
-        self.agent_executor = AgentExecutor(
-            agent=agent,
-            tools=self.tools,
-            verbose=True
-        )
     
-    def execute(self, command: str, chat_history: List[BaseMessage]) -> Dict[str, Any]:
+    def execute(self, command: str, chat_history: List[BaseMessage], stream_handler: StreamHandler) -> None:
         """
         Execute a command through the agent.
         
         Args:
             command (str): The command or natural language request
             chat_history (List[BaseMessage]): The chat history
-            
-        Returns:
-            Dict[str, Any]: The agent's response containing the output
+            stream_handler (StreamHandler): Handler for streaming tokens
         """
-        return self.agent_executor.invoke({
+        # Update LLM with stream handler
+        self.llm.callbacks = [stream_handler]
+        
+        # Create agent with updated LLM
+        agent = create_openai_tools_agent(self.llm, self.tools, self.prompt)
+        agent_executor = AgentExecutor(
+            agent=agent,
+            tools=self.tools,
+            verbose=True
+        )
+        
+        # Execute command
+        agent_executor.invoke({
             "input": command,
             "chat_history": chat_history
-        }) 
+        })
 
 
 if __name__ == "__main__":
@@ -72,5 +84,5 @@ if __name__ == "__main__":
     load_dotenv()
     api_key = os.getenv("DEEPSEEK_API_KEY")
     agent = TerminalAgent(api_key=api_key)
-    response = agent.execute("ls -l", [])
+    response = agent.execute("ls -l", [], StreamHandler(container=None))
     print(response)
