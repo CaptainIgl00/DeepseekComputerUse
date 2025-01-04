@@ -1,0 +1,21 @@
+services:
+  llm_agent:
+    build:
+      context: .
+      dockerfile: image/Dockerfile
+      args:
+        - DISPLAY_NUM=1
+        - HEIGHT=768
+        - WIDTH=1024
+    environment:
+      - DISPLAY_NUM=1
+      - HEIGHT=768
+      - WIDTH=1024
+    ports:
+      - "8080:8080"
+      - "8501:8501"
+      - "6080:6080"
+    volumes:
+      - ./src:/home/computeruse/src
+      - ./.env:/home/computeruse/.env
+    restart: unless-stopped

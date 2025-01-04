@@ -1,7 +1,9 @@
 """
 LangChain agent implementation using DeepSeek LLM for executing bash commands.
 """
-from typing import List, Dict, Any
+from typing import List
+import platform
+from datetime import datetime
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage
 from langchain.agents import AgentExecutor, create_openai_tools_agent
@@ -42,9 +44,7 @@ class TerminalAgent:
         
         # Create prompt
         self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are a helpful AI assistant that can execute bash commands in a Linux environment. "
-             "Always explain what you're doing before executing commands. "
-             "Be careful with destructive commands and ask for confirmation when needed."),
+            self.get_system_prompt(),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
@@ -77,12 +77,9 @@ class TerminalAgent:
         })
 
 
-if __name__ == "__main__":
-    import os
-    from dotenv import load_dotenv
-
-    load_dotenv()
-    api_key = os.getenv("DEEPSEEK_API_KEY")
-    agent = TerminalAgent(api_key=api_key)
-    response = agent.execute("ls -l", [], StreamHandler(container=None))
-    print(response)
+    def get_system_prompt(self):
+        return ("system", f"* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access. "
+                "* You can use the bash tool to execute commands and the str_replace_editor tool to edit files. "
+                "* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example '(DISPLAY=:1 xterm &)'."
+                "* When using bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file. "
+                f"* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.")

@@ -1,6 +1,5 @@
 .env
 context.md
-image/
 
 *.pyc
 __pycache__/
