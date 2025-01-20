@@ -60,6 +60,7 @@ launcher_tooltip = 1
 #-------------------------------------
 # Launcher icon
 launcher_item_app = /usr/share/applications/libreoffice-calc.desktop
+launcher_item_app = /usr/share/applications/nautilus.desktop
 launcher_item_app = /home/computeruse/.config/tint2/applications/terminal.desktop
 launcher_item_app = /home/computeruse/.config/tint2/applications/firefox-custom.desktop
 launcher_item_app = /usr/share/applications/xpaint.desktop

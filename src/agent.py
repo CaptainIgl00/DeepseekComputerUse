@@ -80,6 +80,6 @@ class TerminalAgent:
     def get_system_prompt(self):
         return ("system", f"* You are utilising an Ubuntu virtual machine using {platform.machine()} architecture with internet access. "
                 "* You can use the bash tool to execute commands and the str_replace_editor tool to edit files. "
-                "* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example '(DISPLAY=:1 xterm &)'."
+                "* Using bash tool you can start GUI applications, but you need to set export DISPLAY=:1 and use a subshell. For example '(DISPLAY=:1 xterm &)'. Consider that the GUI apps always appear."
                 "* When using bash tool with commands that are expected to output very large quantities of text, redirect into a tmp file. "
                 f"* The current date is {datetime.today().strftime('%A, %B %-d, %Y')}.")
