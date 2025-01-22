@@ -7,7 +7,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
+.venv/
 build/
 develop-eggs/
 dist/

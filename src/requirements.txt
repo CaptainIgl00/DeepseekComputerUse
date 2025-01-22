@@ -4,3 +4,4 @@ langchain-openai
 langchain-experimental
 streamlit
 python-dotenv
+pytest
