@@ -7,6 +7,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
+.pytest_cache/
 .venv/
 build/
 develop-eggs/
@@ -42,3 +43,5 @@ ENV/
 Thumbs.db
 
 context.md
+htmlcov/
+.coverage

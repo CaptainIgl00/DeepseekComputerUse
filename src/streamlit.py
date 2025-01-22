@@ -5,7 +5,7 @@ import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
 from dotenv import load_dotenv
 import os
-from agent import TerminalAgent, StreamHandler
+from src.agent import TerminalAgent, StreamHandler
 
 def init_chat() -> None:
     """Initialize chat session state if it doesn't exist."""
